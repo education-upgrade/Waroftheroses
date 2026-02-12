@@ -6372,6 +6372,14 @@ function escapeHtml(v){
     .replace(/'/g, "&#39;");
 }
 
+function hasText(v){
+  return typeof v === "string" ? v.trim().length > 0 : (v != null && String(v).trim().length > 0);
+}
+
+function cleanText(v){
+  return hasText(v) ? String(v).trim() : "";
+}
+
 /* ==========================================================
    DAILY CHALLENGE (purposeful + rotating)
    ========================================================== */
@@ -7116,32 +7124,39 @@ window.addEventListener("DOMContentLoaded", ()=>{
 function buildKnowledgeCards(){
   const out = [];
   let n = 1;
-  const push = (topicId,q,a,tags=[]) => out.push({
+  const push = (topicId,q,a,tags=[]) => {
+    const qText = cleanText(q);
+    const aText = cleanText(a);
+    if(!qText || !aText) return;
+    out.push({
     id:`c${String(n++).padStart(4,"0")}`,
-    topicId, q, a, tags, kind:"knowledge"
+    topicId, q:qText, a:aText, tags, kind:"knowledge"
   });
+  };
 
   for(const topicId of Object.keys(FACT_BANK)){
     const T = FACT_BANK[topicId];
 
-    (T.core||[]).forEach(c => push(topicId, c.q, c.a, c.tags||[]));
+    (T.core||[]).forEach(c => push(topicId, c?.q, c?.a, c?.tags||[]));
 
 (T.terms||[]).forEach(t=>{
+  if(!hasText(t?.term) || !hasText(t?.meaning)) return;
   push(topicId, `Define: ${t.term}.`, t.meaning, [t.term,"definition"]);
 
   if (t.date && String(t.date).trim() !== "") {
     push(topicId, `Date check: ${t.term} — when?`, `${t.date}.`, [t.term,"date"]);
   }
 
-  const sig = (t.significance ?? "").toString().trim();
+  const sig = cleanText(t?.significance);
   if(sig){
     push(topicId, `Why was ${t.term} significant?`, sig, [t.term,"significance"]);
   }
 });
 
     (T.people||[]).forEach(p=>{
+      if(!hasText(p?.name) || !hasText(p?.role)) return;
       push(topicId, `Who was ${p.name}?`, p.role, [p.name,"people"]);
-      const psig = (p.significance ?? "").toString().trim();
+      const psig = cleanText(p?.significance);
       if(psig){
         push(topicId, `Why does ${p.name} matter?`, psig, [p.name,"significance"]);
       }
@@ -7149,13 +7164,16 @@ function buildKnowledgeCards(){
 });
 
 (T.events||[]).forEach(e=>{
+  if(!hasText(e?.name) || !hasText(e?.what)) return;
   push(topicId, `What happened in: ${e.name}?`, e.what, [e.name,"event"]);
 
   if (e.date && String(e.date).trim() !== "") {
     push(topicId, `Date check: ${e.name} — when?`, `${e.date}.`, [e.name,"date"]);
   }
 
-  push(topicId, `Why did ${e.name} matter?`, e.whyMatters, [e.name,"significance"]);
+  if(hasText(e?.whyMatters)){
+    push(topicId, `Why did ${e.name} matter?`, e.whyMatters, [e.name,"significance"]);
+  }
   push(topicId, `Give two consequences of ${e.name}.`, `1) …  2) … (be specific)`, [e.name,"consequences"]);
 });
   }
@@ -7842,20 +7860,24 @@ function buildMcqBank(){
   const PEOPLE = allPeople();
   const EVENTS = allEvents();
 
-  const termDates = TERMS.filter(t=>t.date && String(t.date).trim()!=="").map(t=>String(t.date));
-  const termMeans = TERMS.map(t=>String(t.meaning));
-  const termSigs  = TERMS.map(t=>String(t.significance));
-  const peopleRoles = PEOPLE.map(p=>String(p.role));
-  const peopleSigs  = PEOPLE.map(p=>String(p.significance));
-  const eventDates = EVENTS.filter(e=>e.date && String(e.date).trim()!=="").map(e=>String(e.date));
-  const eventWhats  = EVENTS.map(e=>String(e.what));
-  const eventWhy    = EVENTS.map(e=>String(e.whyMatters));
+  const termDates = TERMS.filter(t=>hasText(t?.date)).map(t=>cleanText(t.date));
+  const termMeans = TERMS.map(t=>cleanText(t?.meaning)).filter(Boolean);
+  const termSigs  = TERMS.map(t=>cleanText(t?.significance)).filter(Boolean);
+  const peopleRoles = PEOPLE.map(p=>cleanText(p?.role)).filter(Boolean);
+  const peopleSigs  = PEOPLE.map(p=>cleanText(p?.significance)).filter(Boolean);
+  const eventDates = EVENTS.filter(e=>hasText(e?.date)).map(e=>cleanText(e.date));
+  const eventWhats  = EVENTS.map(e=>cleanText(e?.what)).filter(Boolean);
 
   function push(topicId,q,choices,answer,explain){
-    bank.push({ topicId, q, choices, answer, explain });
+    if(!hasText(q) || !hasText(answer) || !hasText(explain)) return;
+    const cleanedChoices = (choices||[]).map(cleanText).filter(Boolean);
+    const uniqueChoices = [...new Set(cleanedChoices)];
+    if(uniqueChoices.length < 2 || !uniqueChoices.includes(cleanText(answer))) return;
+    bank.push({ topicId, q:cleanText(q), choices:uniqueChoices, answer:cleanText(answer), explain:cleanText(explain) });
   }
 
   TERMS.forEach(t=>{
+    if(!hasText(t?.term) || !hasText(t?.meaning)) return;
     if (t.date && String(t.date).trim() !== "") {
   const wrongDates = shuffle(
     termDates.filter(d => d !== String(t.date))
@@ -7870,8 +7892,9 @@ function buildMcqBank(){
   );
 }
 
-    const wrongDefs = shuffle(termMeans.filter(m=>m!==String(t.meaning))).slice(0,3);
-    push(t.topicId, `Which definition best matches: ${t.term}?`, shuffle([String(t.meaning), ...wrongDefs]), String(t.meaning),
+    const meaningText = cleanText(t.meaning);
+    const wrongDefs = shuffle(termMeans.filter(m=>m!==meaningText)).slice(0,3);
+    push(t.topicId, `Which definition best matches: ${t.term}?`, shuffle([meaningText, ...wrongDefs]), meaningText,
       `Correct: ${t.meaning}`);
 
     const sigText = (t.significance ?? "").toString().trim();
@@ -7888,8 +7911,10 @@ function buildMcqBank(){
   });
 
   PEOPLE.forEach(p=>{
-    const wrongRoles = shuffle(peopleRoles.filter(r=>r!==String(p.role))).slice(0,3);
-    push(p.topicId, `Which role best matches: ${p.name}?`, shuffle([String(p.role), ...wrongRoles]), String(p.role),
+    if(!hasText(p?.name) || !hasText(p?.role)) return;
+    const roleText = cleanText(p.role);
+    const wrongRoles = shuffle(peopleRoles.filter(r=>r!==roleText)).slice(0,3);
+    push(p.topicId, `Which role best matches: ${p.name}?`, shuffle([roleText, ...wrongRoles]), roleText,
       `Correct: ${p.role}.`);
 
     const psigText = (p.significance ?? "").toString().trim();
@@ -7906,6 +7931,7 @@ function buildMcqBank(){
   });
 
 EVENTS.forEach(e=>{
+ if(!hasText(e?.name) || !hasText(e?.what)) return;
  if (e.date && String(e.date).trim() !== "") {
   const wrongDates = shuffle(
     eventDates.filter(d => d !== String(e.date))
@@ -7920,19 +7946,22 @@ EVENTS.forEach(e=>{
   );
 }
 
-    const wrongWhat = shuffle(eventWhats.filter(w=>w!==String(e.what))).slice(0,3);
-    push(e.topicId, `What happened in: ${e.name}?`, shuffle([String(e.what), ...wrongWhat]), String(e.what),
+    const whatText = cleanText(e.what);
+    const wrongWhat = shuffle(eventWhats.filter(w=>w!==whatText)).slice(0,3);
+    push(e.topicId, `What happened in: ${e.name}?`, shuffle([whatText, ...wrongWhat]), whatText,
       `Correct: ${e.what}`);
 
-    const whyPrompt = String(e.whyMatters);
-    const distractorEvents = shuffle(EVENTS.filter(x=>x.name!==e.name).map(x=>x.name)).slice(0,3);
-    push(
-      e.topicId,
-      `Which event matches this impact? “${whyPrompt}”`,
-      shuffle([e.name, ...distractorEvents]),
-      e.name,
-      `Correct: ${e.name}${(e.date && String(e.date).trim()!=="") ? ` (${e.date})` : ""}.`
-    );
+    const whyPrompt = cleanText(e.whyMatters);
+    if(whyPrompt){
+      const distractorEvents = shuffle(EVENTS.filter(x=>hasText(x?.name) && x.name!==e.name).map(x=>x.name)).slice(0,3);
+      push(
+        e.topicId,
+        `Which event matches this impact? “${whyPrompt}”`,
+        shuffle([e.name, ...distractorEvents]),
+        e.name,
+        `Correct: ${e.name}${(e.date && String(e.date).trim()!=="") ? ` (${e.date})` : ""}.`
+      );
+    }
   });
 
   return bank;
@@ -7965,6 +7994,13 @@ function startQuiz(){
   QUIZ.wrong = [];
   QUIZ.topicId = topicId;
   if($('quizSummary')) $('quizSummary').classList.add('hidden');
+
+  if(!QUIZ.list.length){
+    $("quizEmpty").classList.remove("hidden");
+    $("quizBox").classList.add("hidden");
+    $("quizEmpty").textContent = "No complete quiz questions are available for this selection yet. Try another topic or Mixed mode.";
+    return;
+  }
 
   $("quizStreakPill").textContent = `🔥 Streak: ${QUIZ.streak}`;
   $("quizBestStreakPill").textContent = `🏆 Best: ${QUIZ.best}`;
@@ -8031,6 +8067,7 @@ renderQuizQ();
 
 function renderQuizQ(){
   const q = QUIZ.list[QUIZ.idx];
+  if(!q) return;
   $("quizMeta").textContent = `Q ${QUIZ.idx+1}/${QUIZ.list.length}`;
   $("quizScore").textContent = `Score: ${QUIZ.score}`;
   $("quizQ").textContent = q.q;
