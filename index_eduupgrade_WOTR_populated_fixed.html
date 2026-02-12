@@ -2488,7 +2488,8 @@ const TOPICS = [
   { id:"t3", title:"3. Topic 3" },
   { id:"t4", title:"4. Topic 4" }
 ];
-/* ====================================const FACT_BANK = {
+/* ==================================== */
+const FACT_BANK = {
   "t1": {
     "title": "1. Fall of the House of Lancaster (1450–1459)",
     "terms": [
@@ -5534,29 +5535,6 @@ const TOPICS = [
       }
     ]
   }
-};" }
-    ]
-  },
-  t2: {
-    title: "2. Topic 2",
-    terms: [
-      { term:"Key term C", date:"", meaning:"(Add definition)", significance:"(Add why it matters)" }
-    ],
-    people: [],
-    events: []
-  },
-  t3: {
-    title: "3. Topic 3",
-    terms: [],
-    people: [],
-    events: []
-  },
-  t4: {
-    title: "4. Topic 4",
-    terms: [],
-    people: [],
-    events: []
-  }
 };
 
 
@@ -6913,6 +6891,7 @@ function setTab(tabId){
 }
 document.querySelectorAll(".navBtn").forEach(btn=>{
   btn.addEventListener("click", ()=>setTab(btn.dataset.tab));
+});
 
 /* ==========================================================
    DUOLINGO-LIKE "TODAY" LAYER (guided next step + habits)
@@ -6984,7 +6963,6 @@ function updateWeeklyGoalPill(){
   const goal = 5;
   el.textContent = `${Math.min(days,goal)}/${goal}`;
 }
-});
 
 /* Games hub navigation */
 function gamesShowHub(){
@@ -7959,6 +7937,7 @@ EVENTS.forEach(e=>{
 
   return bank;
 }
+const MCQ_BANK_MANUAL = Array.isArray(globalThis.MCQ_BANK_MANUAL) ? globalThis.MCQ_BANK_MANUAL : [];
 const MCQ_BANK = [...MCQ_BANK_MANUAL, ...buildMcqBank()];
 
 function getQuizPool(topicId){

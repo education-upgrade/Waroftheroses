@@ -1,0 +1,9 @@
+{
+  "name": "Education Upgrade — Wars of the Roses",
+  "short_name": "WotR Upgrade",
+  "start_url": "./index_eduupgrade_WOTR_populated_fixed.html",
+  "display": "standalone",
+  "background_color": "#fbf8f6",
+  "theme_color": "#f8f3ef",
+  "icons": []
+}
