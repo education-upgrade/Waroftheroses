@@ -1606,165 +1606,116 @@ h1{
 
 
 /* ======================================================
-   CLEAN PROFESSIONAL UI MODE
-   (Applied override)
+   ENGAGING + PROFESSIONAL UI ENHANCEMENTS
    ====================================================== */
 
 body{
-  background:#f7f7f7 !important;
+  background:
+    radial-gradient(760px 460px at 8% -2%, rgba(242,183,166,.26), transparent 58%),
+    radial-gradient(860px 520px at 92% 2%, rgba(247,213,200,.22), transparent 62%),
+    linear-gradient(180deg, #fbf7f4 0%, #f4f0ed 46%, #f7f6f5 100%) !important;
 }
 
-/* ---------- HEADER ---------- */
-
-header#homeHeader::before{
-  opacity:.16 !important;
+header#homeHeader{
+  border-bottom:1px solid rgba(0,0,0,.06);
+  box-shadow: 0 10px 26px rgba(0,0,0,.07);
 }
 
-header#homeHeader::after{
-  display:none !important;
-}
+header#homeHeader::before{ opacity:.3 !important; }
+header#homeHeader::after{ display:block !important; }
 
 .banner-title-pill{
-  background:none !important;
-  backdrop-filter:none !important;
-  box-shadow:none !important;
-  padding:0 !important;
+  display:inline-flex;
+  align-items:center;
+  border:1px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding:8px 14px;
+  border-radius:999px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  font-weight:950;
+  letter-spacing:.25px;
 }
-
-/* ---------- CARDS ---------- */
 
 .card{
-  background:#ffffff !important;
-  border:1px solid #e6e6e6 !important;
-  box-shadow:0 2px 6px rgba(0,0,0,.05) !important;
+  border:1px solid rgba(0,0,0,.08) !important;
+  box-shadow: 0 14px 30px rgba(24,12,7,.09), 0 2px 0 rgba(255,255,255,.55) inset !important;
 }
-
-section.tabpane:not(#home) .card::before{
-  display:none !important;
-}
-
-/* ---------- TYPOGRAPHY ---------- */
-
-h1,
-.tileMain,
-.tileNum,
-.levelBadge,
-.kpiMiniVal,
-.kpiVal{
-  font-weight:700 !important;
-}
-
-label,
-.pill,
-.note{
-  font-weight:500 !important;
-}
-
-/* ---------- KPI PILLS ---------- */
 
 .kpiPill{
-  background:#fff !important;
-  backdrop-filter:none !important;
-  box-shadow:none !important;
-  border:1px solid #e5e5e5 !important;
+  border:1px solid rgba(255,255,255,.56) !important;
+  background:rgba(255,255,255,.46) !important;
+  box-shadow:0 10px 22px rgba(0,0,0,.08) !important;
 }
 
-/* ---------- BUTTONS ---------- */
+.pill{
+  border:1px solid rgba(0,0,0,.09) !important;
+  background:rgba(255,255,255,.82) !important;
+  box-shadow: 0 8px 16px rgba(0,0,0,.05);
+}
 
 .btn{
-  background:#fff !important;
-  border:1px solid #ddd !important;
-  box-shadow:none !important;
+  border:1px solid rgba(0,0,0,.08) !important;
+  box-shadow:0 8px 16px rgba(0,0,0,.07);
+  transition: transform .18s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 24px rgba(0,0,0,.09);
 }
 
 .btn.primary{
-  background:#f2b7a6 !important;
-  border:none !important;
-  color:#fff !important;
+  color:#2d1811 !important;
+  border:1px solid rgba(0,0,0,.05) !important;
+  background: linear-gradient(135deg, #f4b8a7, #f7d4c7) !important;
 }
 
-/* ---------- TOPIC TILES ---------- */
-
-.progressTank{
-  background:#f4f4f4 !important;
-  box-shadow:none !important;
+.topicTile{
+  border:1px solid rgba(0,0,0,.08);
+  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(253,235,228,.9));
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 
-.progressLiquid{
-  background:#f2b7a6 !important;
+.topicTile:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 24px rgba(0,0,0,.08);
 }
 
-.progressLiquid::before{
-  display:none !important;
-}
+.progressTank{ background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,235,226,.78)) !important; }
 
-/* ---------- TOGGLE SWITCH ---------- */
-
-.slider{
-  background:#ddd !important;
-  box-shadow:none !important;
-}
-
-.switch input:checked + .slider{
-  background:#77cfa3 !important;
-}
-
-/* ---------- STREAK ---------- */
-
-.streakNum{
-  text-shadow:none !important;
-  color:#333 !important;
-}
-
-.streakFlame{
-  animation:none !important;
-}
-
-.streakHero::before{
-  display:none !important;
-}
-
-/* ---------- PILLS ---------- */
-
-.pill{
-  background:#fff !important;
-  border:1px solid #e3e3e3 !important;
-  box-shadow:none !important;
-}
-
-/* ---------- NAV BAR ---------- */
+.slider{ box-shadow:0 4px 10px rgba(0,0,0,.1) !important; }
 
 nav{
-  backdrop-filter:none !important;
-  background:#ffffff !important;
+  background:rgba(255,255,255,.75) !important;
+  backdrop-filter: blur(16px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
+  border-top:1px solid rgba(0,0,0,.07) !important;
+  box-shadow: 0 -8px 18px rgba(0,0,0,.06);
+}
+
+.navBtn{
+  transition: transform .18s ease, color .18s ease;
 }
 
 .navBtn.active{
   position:relative;
+  transform: translateY(-1px);
 }
 
 .navBtn.active::after{
   content:"";
   position:absolute;
   bottom:8px;
-  width:22px;
+  width:24px;
   height:3px;
   border-radius:3px;
-  background:#f2b7a6;
+  background:linear-gradient(90deg, #f4b8a7, #e6a78f);
 }
 
-/* ---------- GAMES / PANES ---------- */
-
-.connectionsCard::before,
-.gamePillBtn::before{
-  display:none !important;
-}
-
-/* ---------- REMOVE IDLE ANIMATIONS ---------- */
-
-*{
-  animation-duration:.001ms !important;
-  animation-iteration-count:1 !important;
+@media (max-width:520px){
+  .banner-title-pill{ padding:7px 12px; font-size:13px; }
 }
 
 
